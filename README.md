@@ -1,0 +1,1 @@
+# Foobot API wrapper

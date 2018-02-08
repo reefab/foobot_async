@@ -37,4 +37,34 @@ class FoobotClient(object):
         with async_timeout.timeout(self._timeout):
             resp = yield from self._session.get(
                     path, headers=dict(self._headers, **kwargs))
+            if resp.status == 400:
+                raise BadFormat(resp.text())
+            elif resp.status == 401:
+                raise AuthFailure(resp.text())
+            elif resp.status == 403:
+                raise ForbiddenAccess(resp.text())
+            elif resp.status == 429:
+                raise TooManyRequests(resp.text())
+            elif resp.status == 500:
+                raise InternalError(resp.text())
+            elif resp.status != 200:
+                raise FoobotClientError(resp.text())
             return (yield from resp.json())
+
+class FoobotClientError(Exception):
+    pass
+
+class AuthFailure(FoobotClientError):
+    pass
+
+class BadFormat(FoobotClientError):
+    pass
+
+class ForbiddenAccess(FoobotClientError):
+    pass
+
+class TooManyRequests(FoobotClientError):
+    pass
+
+class InternalError(FoobotClientError):
+    pass

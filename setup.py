@@ -1,25 +1,27 @@
-"""A setuptools based setup module."""
+import setuptools
 
-from setuptools import setup, find_packages
+setuptools.setup(
+    name="foobot_async",
+    version="0.0.1",
+    url="https://github.com/reefab/foobot_async",
 
-setup(
-    name='foobot_async',
-    version='0.0.1',
-    description='asyncio-friendly python API for foobot devices',
+    author="Fabien Piuzzi",
+    author_email="fabien@reefab.net",
+
     long_description='asyncio-friendly python API for Foobot Air Quality Monitors (https://foobot.io). Requires Python 3.4+',
-    url='https://github.com/andrey-git/waqi-async',
+    long_description=open('README.rst').read(),
     license='MIT',
-    classifiers=[
-        'Development Status :: 4 - Beta',
-        'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-    ],
-    keywords='foobot',
+
+    packages=setuptools.find_packages(),
+
     install_requires=['aiohttp', 'async_timeout'],
     zip_safe=True,
-    author = 'Fabien Piuzzi',
-    author_email = 'fabien@reefab.net',
-    packages=find_packages()
+
+    classifiers=[
+        'Development Status :: 2 - Pre-Alpha',
+        'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+    ],
 )

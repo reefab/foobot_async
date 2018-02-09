@@ -1,11 +1,12 @@
 BASE_URL = "https://api.foobot.io/v2/"
 DEVICE_URL = BASE_URL + 'owner/{username}/device/'
-DATA_URL = BASE_URL + "device/{uuid}/datapoint/{period:d}/last/{average_by:d}/"
+LAST_DATA_URL = BASE_URL + "device/{uuid}/datapoint/{period:d}/last/{average_by:d}/"
+HISTORICAL_DATA_URL = BASE_URL + "device/{uuid}/datapoint/{start:d}/{end:d}/{average_by:d}/"
 
 import asyncio
 import aiohttp
 import async_timeout
-from datetime import datetime
+from datetime import datetime, timezone
 from math import trunc
 
 class FoobotClient(object):
@@ -27,10 +28,29 @@ class FoobotClient(object):
         return (yield from self._get(DEVICE_URL.format(username= self._username)))
 
     @asyncio.coroutine
-    def get_data(self, uuid, period, average_by):
-        return (yield from self._get(DATA_URL.format(uuid= uuid,
-                                                     period= trunc(period),
-                                                     average_by= trunc(average_by))))
+    def get_last_data(self, uuid, period=0, average_by=0):
+        return self.parse_data((yield from self._get(
+            LAST_DATA_URL.format(uuid= uuid,
+                period= trunc(period),
+                average_by= trunc(average_by)))))
+
+    @asyncio.coroutine
+    def get_historical_data(self, uuid, start, end, average_by=0):
+        return self.parse_data((yield from self._get(
+            HISTORICAL_DATA_URL.format(uuid= uuid,
+                start = trunc(start.replace(tzinfo=timezone.utc).timestamp()),
+                end = trunc(end.replace(tzinfo=timezone.utc).timestamp()),
+                average_by= trunc(average_by)))))
+
+    def parse_data(self, response):
+        parsed = []
+        items = response['sensors']
+        for datapoint in response['datapoints']:
+            line = {}
+            for index, data in enumerate(datapoint):
+                line[items[index]] = data
+            parsed.append(line)
+        return parsed
 
     @asyncio.coroutine
     def _get(self, path, **kwargs):

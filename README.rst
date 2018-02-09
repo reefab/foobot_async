@@ -9,6 +9,9 @@ foobot_async
    :target: https://travis-ci.org/reefab/foobot_async
    :alt: Latest Travis CI build status
 
+.. image:: https://coveralls.io/repos/github/reefab/foobot_async/badge.svg?branch=master
+   :target: https://coveralls.io/github/reefab/foobot_async?branch=master
+
 API Client for Foobot Air Quality Monitoring devices
 
 Usage

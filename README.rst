@@ -12,12 +12,15 @@ Foobot async API Client
 .. image:: https://coveralls.io/repos/github/reefab/foobot_async/badge.svg?branch=master
    :target: https://coveralls.io/github/reefab/foobot_async?branch=master
 
+.. image:: https://readthedocs.org/projects/foobot-async/badge/?version=latest
+   :target: http://foobot-async.readthedocs.io/en/latest/?badge=latest
+   :alt: Documentation Status
+
 API Client for `Foobot <https://foobot.io>`_ Air Quality Monitoring devices.
 
-.. image:: docs/foobot.jpg
+.. image:: https://cdn-foobot.pressidium.com/wp-content/uploads/2016/09/device2.jpg
 
 Uses `aiohttp <https://aiohttp.readthedocs.io/en/stable/>`_.
-
 
 Usage
 -----

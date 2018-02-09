@@ -9,7 +9,6 @@ setuptools.setup(
     author_email="fabien@reefab.net",
 
     long_description='asyncio-friendly python API for Foobot Air Quality Monitors (https://foobot.io). Requires Python 3.4+',
-    long_description=open('README.rst').read(),
     license='MIT',
 
     packages=setuptools.find_packages(),

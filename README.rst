@@ -1,5 +1,5 @@
-foobot_async
-============
+Foobot async API Client
+=======================
 
 .. image:: https://img.shields.io/pypi/v/foobot_async.svg
     :target: https://pypi.python.org/pypi/foobot_async
@@ -12,24 +12,22 @@ foobot_async
 .. image:: https://coveralls.io/repos/github/reefab/foobot_async/badge.svg?branch=master
    :target: https://coveralls.io/github/reefab/foobot_async?branch=master
 
-API Client for Foobot Air Quality Monitoring devices
+API Client for `Foobot <https://foobot.io>`_ Air Quality Monitoring devices.
+
+.. image:: docs/foobot.jpg
+
+Uses `aiohttp <https://aiohttp.readthedocs.io/en/stable/>`_.
+
 
 Usage
 -----
 
-Installation
-------------
+Once you have your device setup and working, you'll need to get an API key.
 
-Requirements
-^^^^^^^^^^^^
+You can register for one at their `developers site <https://api.foobot.io/apidoc/index.html>`_.
 
 Compatibility
 -------------
 
-Licence
--------
-
-Authors
--------
-
-`foobot_async` was written by `Fabien Piuzzi <fabien@reefab.net>`_.
+ * Python 3.5
+ * Python 3.6

@@ -3,7 +3,7 @@ import asyncio
 import pytest
 from aioresponses import aioresponses
 from datetime import datetime
-from foobot_async import *
+from foobot_async import FoobotClient
 
 client = FoobotClient('token', 'example@example.com')
 loop = asyncio.get_event_loop()
@@ -45,7 +45,7 @@ def test_failed_auth_request():
         mocked.get('https://api.foobot.io/v2/owner/example@example.com/device/',
                    status=401, body='{"message": "invalid key provided"}')
 
-        with pytest.raises(AuthFailure):
+        with pytest.raises(FoobotClient.AuthFailure):
             resp = loop.run_until_complete(client.get_devices())
 
 def test_failed_bad_format_request():
@@ -57,7 +57,7 @@ def test_failed_bad_format_request():
                                         "stack": "[obfuscated]",
                                         "propagatedException": null}''')
 
-        with pytest.raises(BadFormat):
+        with pytest.raises(FoobotClient.BadFormat):
             resp = loop.run_until_complete(client.get_devices())
 
 def test_forbidden_access_request():
@@ -68,7 +68,7 @@ def test_forbidden_access_request():
                                          "propagatedException": null }":
                                          "invalid key provided"}''')
 
-        with pytest.raises(ForbiddenAccess):
+        with pytest.raises(FoobotClient.ForbiddenAccess):
             resp = loop.run_until_complete(client.get_devices())
 
 def test_overquota_request():
@@ -76,7 +76,7 @@ def test_overquota_request():
         mocked.get('https://api.foobot.io/v2/owner/example@example.com/device/',
                    status=429, body='')
 
-        with pytest.raises(TooManyRequests):
+        with pytest.raises(FoobotClient.TooManyRequests):
             resp = loop.run_until_complete(client.get_devices())
 
 def test_internal_error_request():
@@ -84,7 +84,7 @@ def test_internal_error_request():
         mocked.get('https://api.foobot.io/v2/owner/example@example.com/device/',
                    status=500, body='')
 
-        with pytest.raises(InternalError):
+        with pytest.raises(FoobotClient.InternalError):
             resp = loop.run_until_complete(client.get_devices())
 
 def test_unhandled_error_request():
@@ -92,7 +92,7 @@ def test_unhandled_error_request():
         mocked.get('https://api.foobot.io/v2/owner/example@example.com/device/',
                    status=404, body='')
 
-        with pytest.raises(FoobotClientError):
+        with pytest.raises(FoobotClient.ClientError):
             resp = loop.run_until_complete(client.get_devices())
 
 def test_get_last_data_request():

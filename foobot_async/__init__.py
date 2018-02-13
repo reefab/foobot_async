@@ -13,7 +13,7 @@ class FoobotClient(object):
     """
     Foobot API client
 
-    :param token: API secret key used for authentication, see main doc on how 
+    :param token: API secret key used for authentication, see main doc on how
         to obtain one
     :type token: str
     :param username: Your username for your Foobot account
@@ -44,7 +44,7 @@ class FoobotClient(object):
         Get a list of devices associated with that account.
 
         :returns: list of devices
-        :raises: FoobotClientError, AuthFailure, BadFormat, ForbiddenAccess,
+        :raises: ClientError, AuthFailure, BadFormat, ForbiddenAccess,
                  TooManyRequests, InternalError
 
         .. note::
@@ -70,7 +70,7 @@ class FoobotClient(object):
             long range requests (e.g. more than 1 day)
         :type average_by: integer
         :returns: list of datapoints
-        :raises: FoobotClientError, AuthFailure, BadFormat, ForbiddenAccess,
+        :raises: ClientError, AuthFailure, BadFormat, ForbiddenAccess,
                  TooManyRequests, InternalError
 
         .. note::
@@ -107,7 +107,7 @@ class FoobotClient(object):
             long range requests (e.g. more than 1 day)
         :type average_by: integer
         :returns: list of datapoints
-        :raises: FoobotClientError, AuthFailure, BadFormat, ForbiddenAccess,
+        :raises: ClientError, AuthFailure, BadFormat, ForbiddenAccess,
                  TooManyRequests, InternalError
 
         .. seealso:: :func:`parse_data` for return data syntax
@@ -152,33 +152,33 @@ class FoobotClient(object):
             resp = yield from self._session.get(
                     path, headers=dict(self._headers, **kwargs))
             if resp.status == 400:
-                raise BadFormat(resp.text())
+                raise FoobotClient.BadFormat(resp.text())
             elif resp.status == 401:
-                raise AuthFailure(resp.text())
+                raise FoobotClient.AuthFailure(resp.text())
             elif resp.status == 403:
-                raise ForbiddenAccess(resp.text())
+                raise FoobotClient.ForbiddenAccess(resp.text())
             elif resp.status == 429:
-                raise TooManyRequests(resp.text())
+                raise FoobotClient.TooManyRequests(resp.text())
             elif resp.status == 500:
-                raise InternalError(resp.text())
+                raise FoobotClient.InternalError(resp.text())
             elif resp.status != 200:
-                raise FoobotClientError(resp.text())
+                raise FoobotClient.ClientError(resp.text())
             return (yield from resp.json())
 
-class FoobotClientError(Exception):
-    pass
+    class ClientError(Exception):
+        pass
 
-class AuthFailure(FoobotClientError):
-    pass
+    class AuthFailure(ClientError):
+        pass
 
-class BadFormat(FoobotClientError):
-    pass
+    class BadFormat(ClientError):
+        pass
 
-class ForbiddenAccess(FoobotClientError):
-    pass
+    class ForbiddenAccess(ClientError):
+        pass
 
-class TooManyRequests(FoobotClientError):
-    pass
+    class TooManyRequests(ClientError):
+        pass
 
-class InternalError(FoobotClientError):
-    pass
+    class InternalError(ClientError):
+        pass

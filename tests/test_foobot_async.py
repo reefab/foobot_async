@@ -142,3 +142,18 @@ def test_get_historical_data_request():
                     co2 = 1178.0,
                     voc = 325.5,
                     allpollu= 131.19643) == resp[0]
+
+def test_get_bad_data_request():
+    body = '''{"uuid": "1234127987696AB",
+               "start": 1518131274,
+               "end": 1518131874}'''
+
+    with aioresponses() as mocked:
+        mocked.get('https://api.foobot.io/v2/device/1234127987696AB/datapoint/1518121274/1518131274/3600/',
+                   status=200, body=body)
+
+        with pytest.raises(FoobotClient.InvalidData):
+            loop.run_until_complete(client.get_historical_data("1234127987696AB",
+                                                               datetime.utcfromtimestamp(1518121274),
+                                                               datetime.utcfromtimestamp(1518131274),
+                                                               3600))

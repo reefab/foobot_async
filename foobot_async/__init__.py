@@ -138,13 +138,16 @@ class FoobotClient(object):
                 * allpollu: `foobot index <https://help.foobot.io/hc/en-us/articles/204814371-What-does-central-number-mean->`_, unit: %
         """
         parsed = []
-        items = response['sensors']
-        for datapoint in response['datapoints']:
-            line = {}
-            for index, data in enumerate(datapoint):
-                line[items[index]] = data
-            parsed.append(line)
-        return parsed
+        try:
+            items = response['sensors']
+            for datapoint in response['datapoints']:
+                line = {}
+                for index, data in enumerate(datapoint):
+                    line[items[index]] = data
+                parsed.append(line)
+            return parsed
+        except (KeyError, IndexError, TypeError):
+            raise FoobotClient.InvalidData()
 
     @asyncio.coroutine
     def _get(self, path, **kwargs):
@@ -165,20 +168,34 @@ class FoobotClient(object):
                 raise FoobotClient.ClientError(resp.text())
             return (yield from resp.json())
 
+    @property
+    def last_data_request(self):
+        return self._last_data_request
+
     class ClientError(Exception):
+        """Generic Error."""
         pass
 
     class AuthFailure(ClientError):
+        """Failed Authentication."""
         pass
 
     class BadFormat(ClientError):
+        """Request is malformed."""
         pass
 
     class ForbiddenAccess(ClientError):
+        """Access is prohibited."""
         pass
 
     class TooManyRequests(ClientError):
+        """Too many requests for this time period."""
         pass
 
     class InternalError(ClientError):
+        """Server Internal Error."""
+        pass
+
+    class InvalidData(ClientError):
+        """Can't parse response data."""
         pass

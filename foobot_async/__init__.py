@@ -154,23 +154,20 @@ class FoobotClient(object):
         with async_timeout.timeout(self._timeout):
             resp = yield from self._session.get(
                     path, headers=dict(self._headers, **kwargs))
+            resp_text = yield from resp.text()
             if resp.status == 400:
-                raise FoobotClient.BadFormat(resp.text())
+                raise FoobotClient.BadFormat(resp_text)
             elif resp.status == 401:
-                raise FoobotClient.AuthFailure(resp.text())
+                raise FoobotClient.AuthFailure(resp_text)
             elif resp.status == 403:
-                raise FoobotClient.ForbiddenAccess(resp.text())
+                raise FoobotClient.ForbiddenAccess(resp_text)
             elif resp.status == 429:
-                raise FoobotClient.TooManyRequests(resp.text())
+                raise FoobotClient.TooManyRequests(resp_text)
             elif resp.status == 500:
-                raise FoobotClient.InternalError(resp.text())
+                raise FoobotClient.InternalError(resp_text)
             elif resp.status != 200:
-                raise FoobotClient.ClientError(resp.text())
+                raise FoobotClient.ClientError(resp_text)
             return (yield from resp.json())
-
-    @property
-    def last_data_request(self):
-        return self._last_data_request
 
     class ClientError(Exception):
         """Generic Error."""

@@ -13,7 +13,7 @@ setuptools.setup(
 
     packages=setuptools.find_packages(),
 
-    install_requires=['aiohttp>=2.3.10', 'async_timeout', 'typing>=3,<4'],
+    install_requires=['aiohttp>=2.3.10', 'async_timeout'],
     zip_safe=True,
 
     classifiers=[

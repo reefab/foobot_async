@@ -21,7 +21,7 @@ class FoobotClient(object):
     :param session: aiohttp session to use or None
     :type session: object or None
     :param timeout: seconds to wait for before triggering a timeout
-    :type timeout: integer
+    :type timeout: float
     """
 
     def __init__(self, token, username, session=None,

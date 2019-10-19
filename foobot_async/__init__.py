@@ -9,6 +9,13 @@ import async_timeout
 from datetime import datetime, timezone
 from math import trunc
 
+
+try:
+    DEFAULT_TIMEOUT = aiohttp.client.DEFAULT_TIMEOUT.total  # aiohttp >= 3.3
+except AttributeError:
+    DEFAULT_TIMEOUT = aiohttp.client.DEFAULT_TIMEOUT
+
+
 class FoobotClient(object):
     """
     Foobot API client
@@ -25,7 +32,7 @@ class FoobotClient(object):
     """
 
     def __init__(self, token, username, session=None,
-                 timeout=aiohttp.client.DEFAULT_TIMEOUT):
+                 timeout=DEFAULT_TIMEOUT):
         """
         Creates a new :class:`FoobotClient` instance.
         """

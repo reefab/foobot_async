@@ -1,15 +1,18 @@
-BASE_URL = "https://api.foobot.io/v2/"
-DEVICE_URL = BASE_URL + 'owner/{username}/device/'
-LAST_DATA_URL = BASE_URL + "device/{uuid}/datapoint/{period:d}/last/{average_by:d}/"
-HISTORICAL_DATA_URL = BASE_URL + "device/{uuid}/datapoint/{start:d}/{end:d}/{average_by:d}/"
-
+from math import trunc
+from datetime import timezone
 import asyncio
 import aiohttp
 import async_timeout
-from datetime import datetime, timezone
-from math import trunc
 
-class FoobotClient(object):
+BASE_URL = "https://api.foobot.io/v2/"
+DEVICE_URL = BASE_URL + 'owner/{username}/device/'
+LAST_DATA_URL = BASE_URL + \
+                "device/{uuid}/datapoint/{period:d}/last/{average_by:d}/"
+HISTORICAL_DATA_URL = BASE_URL + \
+                "device/{uuid}/datapoint/{start:d}/{end:d}/{average_by:d}/"
+
+
+class FoobotClient():
     """
     Foobot API client
 
@@ -25,7 +28,7 @@ class FoobotClient(object):
     """
 
     def __init__(self, token, username, session=None,
-                 timeout=aiohttp.client.DEFAULT_TIMEOUT):
+                 timeout=aiohttp.client.DEFAULT_TIMEOUT.total):
         """
         Creates a new :class:`FoobotClient` instance.
         """
@@ -49,12 +52,15 @@ class FoobotClient(object):
 
         .. note::
             each device returned will be a dictionary with the following data:
-                * uuid: id of the device, used for querying data from them. Not actually a UUID.
+                * uuid: id of the device, used for querying data from them.
+                Not actually a UUID.
                 * userId: id of the user
-                * mac: MAC of the device, non colon seperated (eg: "013843C3C20A")
+                * mac: MAC of the device, non colon seperated
+                (eg: "013843C3C20A")
                 * name: Name of the device as configured in the app
         """
-        return (yield from self._get(DEVICE_URL.format(username= self._username)))
+        return (yield from self._get(DEVICE_URL.format(
+            username=self._username)))
 
     @asyncio.coroutine
     def get_last_data(self, uuid, period=0, average_by=0):
@@ -66,8 +72,8 @@ class FoobotClient(object):
         :param period: Number of seconds between start time of search and now
         :type period: integer
         :param average_by: amount of seconds to average data over.
-            0 or 300 for no average. Use 3600 (average hourly) or a multiple for
-            long range requests (e.g. more than 1 day)
+            0 or 300 for no average. Use 3600 (average hourly) or a multiple
+            for long range requests (e.g. more than 1 day)
         :type average_by: integer
         :returns: list of datapoints
         :raises: ClientError, AuthFailure, BadFormat, ForbiddenAccess,
@@ -76,15 +82,15 @@ class FoobotClient(object):
         .. note::
             Use period = 0 and averageBy = 0 to get the very last data point.
             If you only need one average for a period, the average_by needs to
-            be bigger than the period (eg, for a 10 minutes average: period = 600,
-            average_by = 601)
+            be bigger than the period (eg, for a 10 minutes average:
+            period = 600, average_by = 601)
 
         .. seealso:: :func:`parse_data` for return data syntax
         """
         return self.parse_data((yield from self._get(
-            LAST_DATA_URL.format(uuid= uuid,
-                period= trunc(period),
-                average_by= trunc(average_by)))))
+            LAST_DATA_URL.format(uuid=uuid,
+                                 period=trunc(period),
+                                 average_by=trunc(average_by)))))
 
     @asyncio.coroutine
     def get_historical_data(self, uuid, start, end, average_by=0):
@@ -93,8 +99,9 @@ class FoobotClient(object):
 
         .. note::
             Can fetch a maximum of 42 days of data.
-            To speed up query processing, you can use a combination of average factor
-            multiple of 1H in seconds (e.g. 3600), and o'clock start and end times
+            To speed up query processing, you can use a combination of average
+            factor multiple of 1H in seconds (e.g. 3600)
+            and o'clock start and end times
 
         :param uuid: Id of the device
         :type uuid: str
@@ -103,8 +110,8 @@ class FoobotClient(object):
         :param end: end of the range
         :type end: datetime
         :param average_by: amount of seconds to average data over.
-            0 or 300 for no average. Use 3600 (average hourly) or a multiple for
-            long range requests (e.g. more than 1 day)
+            0 or 300 for no average. Use 3600 (average hourly) or a multiple
+            for long range requests (e.g. more than 1 day)
         :type average_by: integer
         :returns: list of datapoints
         :raises: ClientError, AuthFailure, BadFormat, ForbiddenAccess,
@@ -113,15 +120,16 @@ class FoobotClient(object):
         .. seealso:: :func:`parse_data` for return data syntax
         """
         return self.parse_data((yield from self._get(
-            HISTORICAL_DATA_URL.format(uuid= uuid,
-                start = trunc(start.replace(tzinfo=timezone.utc).timestamp()),
-                end = trunc(end.replace(tzinfo=timezone.utc).timestamp()),
-                average_by= trunc(average_by)))))
+            HISTORICAL_DATA_URL.format(
+                uuid=uuid,
+                start=trunc(start.replace(tzinfo=timezone.utc).timestamp()),
+                end=trunc(end.replace(tzinfo=timezone.utc).timestamp()),
+                average_by=trunc(average_by)))))
 
     def parse_data(self, response):
         """
         Convert the weird list format used for datapoints to a more usable
-        dictionnary one 
+        dictionnary one
 
         :param response: dictionnary from API json response
         :type response: dict

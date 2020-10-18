@@ -11,7 +11,7 @@ setuptools.setup(
     long_description='asyncio-friendly python API for Foobot Air Quality Monitors (https://foobot.io). Requires Python 3.5+',
     license='MIT',
 
-    packages=setuptools.find_packages(),
+    packages=setuptools.find_packages(exclude=('tests*',)),
 
     install_requires=['aiohttp>=3.6.2', 'async_timeout'],
     zip_safe=True,

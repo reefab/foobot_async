@@ -18,7 +18,7 @@ Foobot async API Client
 
 API Client for `Foobot <https://foobot.io>`_ Air Quality Monitoring devices.
 
-.. image:: https://cdn-foobot.pressidium.com/wp-content/uploads/2016/09/device2.jpg
+.. image:: device2.jpg 
 
 Uses `aiohttp <https://aiohttp.readthedocs.io/en/stable/>`_.
 

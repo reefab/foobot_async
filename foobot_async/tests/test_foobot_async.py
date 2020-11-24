@@ -5,11 +5,11 @@ from aioresponses import aioresponses
 from datetime import datetime
 from foobot_async import FoobotClient
 
-client = FoobotClient('token', 'example@example.com')
 loop = asyncio.get_event_loop()
+client = FoobotClient('token', 'example@example.com')
+
 
 def test_get_devices_request():
-
     with aioresponses() as mocked:
         mocked.get('https://api.foobot.io/v2/owner/example@example.com/device/',
                    status=200, body='''[{"uuid": "1234127987696AB",
@@ -19,9 +19,10 @@ def test_get_devices_request():
         resp = loop.run_until_complete(client.get_devices())
 
         assert [dict(uuid="1234127987696AB",
-                     userId= 2353,
-                     mac= "013843C3C20A",
-                     name= "FooBot")] == resp
+                     userId=2353,
+                     mac="013843C3C20A",
+                     name="FooBot")] == resp
+
 
 def test_get_devices_with_session_request():
     session = aiohttp.ClientSession()
@@ -36,9 +37,10 @@ def test_get_devices_with_session_request():
         resp = loop.run_until_complete(client.get_devices())
 
         assert [dict(uuid="1234127987696AB",
-                     userId= 2353,
-                     mac= "013843C3C20A",
-                     name= "FooBot")] == resp
+                     userId=2353,
+                     mac="013843C3C20A",
+                     name="FooBot")] == resp
+
 
 def test_failed_auth_request():
     with aioresponses() as mocked:
@@ -46,7 +48,8 @@ def test_failed_auth_request():
                    status=401, body='{"message": "invalid key provided"}')
 
         with pytest.raises(FoobotClient.AuthFailure):
-            resp = loop.run_until_complete(client.get_devices())
+            loop.run_until_complete(client.get_devices())
+
 
 def test_failed_bad_format_request():
     with aioresponses() as mocked:
@@ -58,7 +61,8 @@ def test_failed_bad_format_request():
                                         "propagatedException": null}''')
 
         with pytest.raises(FoobotClient.BadFormat):
-            resp = loop.run_until_complete(client.get_devices())
+            loop.run_until_complete(client.get_devices())
+
 
 def test_forbidden_access_request():
     with aioresponses() as mocked:
@@ -69,7 +73,8 @@ def test_forbidden_access_request():
                                          "invalid key provided"}''')
 
         with pytest.raises(FoobotClient.ForbiddenAccess):
-            resp = loop.run_until_complete(client.get_devices())
+            loop.run_until_complete(client.get_devices())
+
 
 def test_overquota_request():
     with aioresponses() as mocked:
@@ -77,7 +82,8 @@ def test_overquota_request():
                    status=429, body='')
 
         with pytest.raises(FoobotClient.TooManyRequests):
-            resp = loop.run_until_complete(client.get_devices())
+            loop.run_until_complete(client.get_devices())
+
 
 def test_internal_error_request():
     with aioresponses() as mocked:
@@ -85,7 +91,8 @@ def test_internal_error_request():
                    status=500, body='')
 
         with pytest.raises(FoobotClient.InternalError):
-            resp = loop.run_until_complete(client.get_devices())
+            loop.run_until_complete(client.get_devices())
+
 
 def test_unhandled_error_request():
     with aioresponses() as mocked:
@@ -93,7 +100,7 @@ def test_unhandled_error_request():
                    status=404, body='')
 
         with pytest.raises(FoobotClient.ClientError):
-            resp = loop.run_until_complete(client.get_devices())
+            loop.run_until_complete(client.get_devices())
 
 def test_get_last_data_request():
     body = '''{"uuid": "1234127987696AB",
@@ -109,14 +116,15 @@ def test_get_last_data_request():
                    status=200, body=body)
 
         resp = loop.run_until_complete(client.get_last_data("1234127987696AB",
-                                                       600, 601))
-        assert dict(time = 1518131274,
-                    pm = 135.70001,
-                    tmp = 21.046001,
-                    hum = 46.6885,
-                    co2 = 1178.0,
-                    voc = 325.5,
-                    allpollu= 131.19643) == resp[0]
+                                                            600, 601))
+        assert dict(time=1518131274,
+                    pm=135.70001,
+                    tmp=21.046001,
+                    hum=46.6885,
+                    co2=1178.0,
+                    voc=325.5,
+                    allpollu=131.19643) == resp[0]
+
 
 def test_get_historical_data_request():
     body = '''{"uuid": "1234127987696AB",
@@ -132,16 +140,17 @@ def test_get_historical_data_request():
                    status=200, body=body)
 
         resp = loop.run_until_complete(client.get_historical_data("1234127987696AB",
-                                                                   datetime.utcfromtimestamp(1518121274),
-                                                                   datetime.utcfromtimestamp(1518131274),
-                                                                   3600))
-        assert dict(time = 1518131274,
-                    pm = 135.70001,
-                    tmp = 21.046001,
-                    hum = 46.6885,
-                    co2 = 1178.0,
-                    voc = 325.5,
-                    allpollu= 131.19643) == resp[0]
+                                                                  datetime.utcfromtimestamp(1518121274),
+                                                                  datetime.utcfromtimestamp(1518131274),
+                                                                  3600))
+        assert dict(time=1518131274,
+                    pm=135.70001,
+                    tmp=21.046001,
+                    hum=46.6885,
+                    co2=1178.0,
+                    voc=325.5,
+                    allpollu=131.19643) == resp[0]
+
 
 def test_get_bad_data_request():
     body = '''{"uuid": "1234127987696AB",

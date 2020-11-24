@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="foobot_async",
-    version="0.3.3",
+    version="1.0.0",
     url="https://github.com/reefab/foobot_async",
 
     author="Fabien Piuzzi",

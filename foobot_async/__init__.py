@@ -41,8 +41,7 @@ class FoobotClient():
         else:
             self._session = aiohttp.ClientSession()
 
-    @asyncio.coroutine
-    def get_devices(self):
+    async def get_devices(self):
         """
         Get a list of devices associated with that account.
 
@@ -59,11 +58,10 @@ class FoobotClient():
                 (eg: "013843C3C20A")
                 * name: Name of the device as configured in the app
         """
-        return (yield from self._get(DEVICE_URL.format(
+        return (await self._get(DEVICE_URL.format(
             username=self._username)))
 
-    @asyncio.coroutine
-    def get_last_data(self, uuid, period=0, average_by=0):
+    async def get_last_data(self, uuid, period=0, average_by=0):
         """
         Get the data from one device for period till now.
 
@@ -87,13 +85,12 @@ class FoobotClient():
 
         .. seealso:: :func:`parse_data` for return data syntax
         """
-        return self.parse_data((yield from self._get(
+        return self.parse_data((await self._get(
             LAST_DATA_URL.format(uuid=uuid,
                                  period=trunc(period),
                                  average_by=trunc(average_by)))))
 
-    @asyncio.coroutine
-    def get_historical_data(self, uuid, start, end, average_by=0):
+    async def get_historical_data(self, uuid, start, end, average_by=0):
         """
         Get the data from one device for a specified time range.
 
@@ -119,7 +116,7 @@ class FoobotClient():
 
         .. seealso:: :func:`parse_data` for return data syntax
         """
-        return self.parse_data((yield from self._get(
+        return self.parse_data((await self._get(
             HISTORICAL_DATA_URL.format(
                 uuid=uuid,
                 start=trunc(start.replace(tzinfo=timezone.utc).timestamp()),
@@ -157,12 +154,11 @@ class FoobotClient():
         except (KeyError, IndexError, TypeError):
             raise FoobotClient.InvalidData()
 
-    @asyncio.coroutine
-    def _get(self, path, **kwargs):
+    async def _get(self, path, **kwargs):
         with async_timeout.timeout(self._timeout):
-            resp = yield from self._session.get(
+            resp = await self._session.get(
                     path, headers=dict(self._headers, **kwargs))
-            resp_text = yield from resp.text()
+            resp_text = await resp.text()
             if resp.status == 400:
                 raise FoobotClient.BadFormat(resp_text)
             elif resp.status == 401:
@@ -175,7 +171,7 @@ class FoobotClient():
                 raise FoobotClient.InternalError(resp_text)
             elif resp.status != 200:
                 raise FoobotClient.ClientError(resp_text)
-            return (yield from resp.json())
+            return (await resp.json())
 
     class ClientError(Exception):
         """Generic Error."""

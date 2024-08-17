@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="foobot_async",
-    version="1.0.0",
+    version="1.0.1",
     url="https://github.com/reefab/foobot_async",
 
     author="Fabien Piuzzi",
@@ -13,7 +13,7 @@ setuptools.setup(
 
     packages=setuptools.find_packages(exclude=['tests', '*.tests', '*.tests.*']),
 
-    install_requires=['aiohttp>=3.6.2', 'async_timeout'],
+    install_requires=['aiohttp>=3.10.0', 'async_timeout'],
     zip_safe=True,
 
     classifiers=[
@@ -25,5 +25,7 @@ setuptools.setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
     ],
 )

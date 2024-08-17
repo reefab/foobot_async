@@ -38,8 +38,6 @@ class FoobotClient():
         self._timeout = timeout
         if session is not None:
             self._session = session
-        else:
-            self._session = aiohttp.ClientSession()
 
     async def get_devices(self):
         """
@@ -155,6 +153,8 @@ class FoobotClient():
             raise FoobotClient.InvalidData()
 
     async def _get(self, path, **kwargs):
+        if not hasattr(self, '_session'):
+            self._session = aiohttp.ClientSession()
         with async_timeout.timeout(self._timeout):
             resp = await self._session.get(
                     path, headers=dict(self._headers, **kwargs))
